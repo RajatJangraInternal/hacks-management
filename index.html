@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hacks Management Dashboard</title>
+  <title>Public Sector Hacks</title>
   <meta name="description" content="Manage and track hacks with a visual Gantt-chart timeline calendar dashboard.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
       <div class="sidebar-header">
         <h1 class="logo">
           <span class="logo-icon">⚡</span>
-          Hacks Manager
+          Public Sector Hacks
         </h1>
         <button class="btn btn-add" id="btn-add-hack" title="Add New Hack">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -99,7 +99,7 @@
         <input type="hidden" id="hack-id">
         <div class="form-group">
           <label for="hack-name">Hack Name</label>
-          <input type="text" id="hack-name" placeholder="e.g. Season Bank Payout" required>
+          <input type="text" id="hack-name" placeholder="e.g. Gov Portal Migration" required>
         </div>
         <div class="form-group">
           <label for="hack-po">PO</label>
@@ -113,6 +113,35 @@
           <label for="hack-cred-sheet">Credential Sheet URL</label>
           <input type="url" id="hack-cred-sheet" placeholder="https://...">
         </div>
+
+        <!-- Stats Fields -->
+        <fieldset class="phase-fieldset" style="border-color: var(--accent);">
+          <legend>Statistics</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hack-num-teams">No. of Teams</label>
+              <input type="number" id="hack-num-teams" placeholder="e.g. 10" min="0">
+            </div>
+            <div class="form-group">
+              <label for="hack-num-users">No. of Users</label>
+              <input type="number" id="hack-num-users" placeholder="e.g. 50" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hack-total-users">Total No. of Users</label>
+              <input type="number" id="hack-total-users" placeholder="e.g. 100" min="0">
+            </div>
+            <div class="form-group">
+              <label for="hack-num-admins">No. of Admins</label>
+              <input type="number" id="hack-num-admins" placeholder="e.g. 5" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="hack-last-minute">Last Minute Requests</label>
+            <textarea id="hack-last-minute" rows="2" placeholder="Any last minute requests..."></textarea>
+          </div>
+        </fieldset>
 
         <!-- Instructions Documents -->
         <div class="form-group">

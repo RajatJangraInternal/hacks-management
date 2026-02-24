@@ -75,6 +75,11 @@ const $hackNotes = $('hack-notes');
 const $btnDelete = $('btn-delete');
 const $toastBox = $('toast-container');
 const $zoomInd = $('zoom-indicator');
+const $hackNumTeams = $('hack-num-teams');
+const $hackNumUsers = $('hack-num-users');
+const $hackTotalUsers = $('hack-total-users');
+const $hackNumAdmins = $('hack-num-admins');
+const $hackLastMinute = $('hack-last-minute');
 const $preStart = $('hack-pre-start');
 const $preEnd = $('hack-pre-end');
 const $mainStart = $('hack-main-start');
@@ -260,7 +265,7 @@ function renderDayHeaders() {
 function renderDayNameHeaders() {
     const f = document.createDocumentFragment();
     const sp = mk('div','row-label');
-    Object.assign(sp.style,{background:'rgba(13,11,26,0.95)',minHeight:'20px',height:'20px'});
+    Object.assign(sp.style,{background:'var(--cl-lavender)',minHeight:'20px',height:'20px'});
     f.appendChild(sp);
 
     for (const cm of calMonths) {
@@ -414,6 +419,14 @@ function renderSidebar() {
         if(h.credSheet)lnks.push(`<a href="${esc(h.credSheet)}" target="_blank" class="hack-link">🔑 Creds</a>`);
         (h.documents||[]).forEach(d=>{lnks.push(d.url?`<a href="${esc(d.url)}" target="_blank" class="hack-link">📝 ${escH(d.name)}</a>`:`<span class="hack-link">📝 ${escH(d.name)}</span>`);});
 
+        let statsHtml = '';
+        const statsItems = [];
+        if(h.numTeams!=null) statsItems.push(`<span class="hack-stat">👥 ${h.numTeams} teams</span>`);
+        if(h.numUsers!=null) statsItems.push(`<span class="hack-stat">🧑 ${h.numUsers} users</span>`);
+        if(h.totalUsers!=null) statsItems.push(`<span class="hack-stat">🌐 ${h.totalUsers} total</span>`);
+        if(h.numAdmins!=null) statsItems.push(`<span class="hack-stat">🛡️ ${h.numAdmins} admins</span>`);
+        if(statsItems.length) statsHtml = `<div class="hack-item-stats">${statsItems.join('')}</div>`;
+
         it.innerHTML = `<div class="hack-item-header"><span class="hack-item-name">${escH(h.name)}</span></div>
             <div class="hack-item-dates">${svg} ${dtShort(h.preStart)} — ${dtShort(h.postEnd)}</div>
             <div class="hack-item-phases">
@@ -421,7 +434,9 @@ function renderSidebar() {
                 <div class="hack-item-phase-bar" style="background:${PHASE.hack.bg};color:${PHASE.hack.bg}" title="Hack"></div>
                 <div class="hack-item-phase-bar" style="background:${PHASE.post.bg};color:${PHASE.post.bg}" title="Post"></div>
             </div>
+            ${statsHtml}
             ${lnks.length?`<div class="hack-item-links">${lnks.join('')}</div>`:''}
+            ${h.lastMinuteRequests?`<div class="hack-item-notes" style="color:var(--accent);">⚠️ ${escH(h.lastMinuteRequests)}</div>`:''}
             ${h.notes?`<div class="hack-item-notes">${escH(h.notes)}</div>`:''}`;
         it.addEventListener('click',()=>openEditModal(h.id));
         f.appendChild(it);
@@ -436,7 +451,8 @@ function renderSidebar() {
 function openAddModal() {
     state.editing = null;
     $modalTitle.textContent = 'Add New Hack';
-    $hackId.value=$hackName.value=$hackPo.value=$hackTechSheet.value=$hackCredSheet.value=$hackNotes.value='';
+    $hackId.value=$hackName.value=$hackPo.value=$hackTechSheet.value=$hackCredSheet.value=$hackNotes.value=$hackLastMinute.value='';
+    $hackNumTeams.value=$hackNumUsers.value=$hackTotalUsers.value=$hackNumAdmins.value='';
     $btnDelete.style.display='none';
     setDocs([]);
     const t=today;
@@ -453,6 +469,8 @@ function openEditModal(id) {
     $modalTitle.textContent = 'Edit Hack';
     $hackId.value=h.id; $hackName.value=h.name;
     $hackPo.value=h.po||''; $hackTechSheet.value=h.techSheet||''; $hackCredSheet.value=h.credSheet||'';
+    $hackNumTeams.value=h.numTeams||''; $hackNumUsers.value=h.numUsers||''; $hackTotalUsers.value=h.totalUsers||''; $hackNumAdmins.value=h.numAdmins||'';
+    $hackLastMinute.value=h.lastMinuteRequests||'';
     setDocs(h.documents||[]); $hackNotes.value=h.notes||'';
     $btnDelete.style.display='inline-flex';
     $preStart.value=h.preStart; $preEnd.value=h.preEnd;
@@ -474,7 +492,7 @@ function handleSave(e) {
     if(d.mainStart>d.mainEnd) return toast('⚠️','Hack end must be ≥ start.');
     if(d.postStart>d.postEnd) return toast('⚠️','Post-Event end must be ≥ start.');
 
-    const hd = {name,po:$hackPo.value.trim(),techSheet:$hackTechSheet.value.trim(),credSheet:$hackCredSheet.value.trim(),documents:getDocs(),notes:$hackNotes.value.trim(),...d};
+    const hd = {name,po:$hackPo.value.trim(),techSheet:$hackTechSheet.value.trim(),credSheet:$hackCredSheet.value.trim(),numTeams:$hackNumTeams.value?+$hackNumTeams.value:null,numUsers:$hackNumUsers.value?+$hackNumUsers.value:null,totalUsers:$hackTotalUsers.value?+$hackTotalUsers.value:null,numAdmins:$hackNumAdmins.value?+$hackNumAdmins.value:null,lastMinuteRequests:$hackLastMinute.value.trim(),documents:getDocs(),notes:$hackNotes.value.trim(),...d};
 
     if(state.editing){
         const idx=state.hacks.findIndex(x=>x.id===state.editing);
